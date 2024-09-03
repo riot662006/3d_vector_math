@@ -1,34 +1,7 @@
 from typing import *
 from vector import Vector
 
-variables: dict[str, Vector] = {}
-
-def load_variables():
-    global variables
-    variables = {}
-
-    try:
-        with open("variables.txt", "r") as file:
-            # reads the variable text file line by line
-            for _var_args in file:
-                var_args = _var_args.split()
-
-                if len(var_args) != 4:
-                    raise MemoryError(f"Error in variable.txt: should have 4 arguments in line '{_var_args}'")
-
-                # the first argument is the variable name and the remaining are the i, j, k components
-                var_name = var_args[0]
-
-                variables[var_name] = Vector(*var_args[1:])
-    except FileNotFoundError:
-        # creates variable.text
-        with open("variables.txt", "x") as file:
-            pass
-
-def store_variables():
-    with open("variables.txt", "w") as file:
-        for var_name, vector in variables.items():
-            file.write(f"{var_name} {vector.to_storable()}\n")
+import variables
 
 def not_in_range_throws(arguments: Iterable[Any], left_bound: int, right_bound: int | float) -> Iterable:
     """
@@ -74,7 +47,7 @@ def not_exact_length_throws(arguments: Iterable[Any], valid_lengths: Union[int, 
 
 def get_variable(var_name: str, component: str = 'ijk') -> None:
     """
-    Gets the components of variable `var_name`.
+    Prints the components of variable `var_name`.
 
     Parameters:
     - var_name (str): The name of the variable.
@@ -83,7 +56,7 @@ def get_variable(var_name: str, component: str = 'ijk') -> None:
     Returns:
     - None: This function does not return a value.
     """
-    vector = variables[var_name]
+    vector = variables.get_var(var_name)
     to_print = []
 
     for c in component:
@@ -105,7 +78,7 @@ def set_variable(var_name: str, i: str = "0.0", j: str = "0.0", k: str = "0.0") 
     - None: This function does not return a value.
     """
     vector = Vector(i, j, k)
-    variables[var_name] = vector
+    variables.set_var(var_name, vector)
     print(f"{var_name} => <{vector.to_storable()}>")
 
 def add_variables(*var_names: str) -> None:
@@ -121,7 +94,7 @@ def add_variables(*var_names: str) -> None:
     resultant = Vector(0, 0, 0)
 
     for var_name in var_names:
-        resultant += variables[var_name]
+        resultant += variables.get_var(var_name)
 
     print(f"Resultant => <{resultant.to_storable()}>")
 
@@ -151,7 +124,7 @@ def run():
     Runs an interpreter instance
     """
     # loads the variables
-    load_variables()
+    variables.load_vars()
 
     while (True):
         # nothing right now
@@ -160,4 +133,4 @@ def run():
         break
 
     # stores variables for next run
-    store_variables()
+    variables.store_vars()
