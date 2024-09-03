@@ -7,18 +7,23 @@ def load_variables():
     global variables
     variables = {}
 
-    with open("variables.txt", "r") as file:
-        # reads the variable text file line by line
-        for _var_args in file:
-            var_args = _var_args.split()
+    try:
+        with open("variables.txt", "r") as file:
+            # reads the variable text file line by line
+            for _var_args in file:
+                var_args = _var_args.split()
 
-            if len(var_args) != 4:
-                raise MemoryError(f"Error in variable.txt: should have 4 arguments in line '{_var_args}'")
+                if len(var_args) != 4:
+                    raise MemoryError(f"Error in variable.txt: should have 4 arguments in line '{_var_args}'")
 
-            # the first argument is the variable name and the remaining are the i, j, k components
-            var_name = var_args[0]
+                # the first argument is the variable name and the remaining are the i, j, k components
+                var_name = var_args[0]
 
-            variables[var_name] = Vector(*var_args[1:])
+                variables[var_name] = Vector(*var_args[1:])
+    except FileNotFoundError:
+        # creates variable.text
+        with open("variables.txt", "x") as file:
+            pass
 
 def store_variables():
     with open("variables.txt", "w") as file:
