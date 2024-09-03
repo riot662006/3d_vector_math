@@ -21,7 +21,7 @@ class Vector:
     
     def to_storable(self) -> str:
         """Gets the storable version of the vector"""
-        return f"{str(self.i)} {str(self.j)} {str(self.k)} "
+        return f"{str(self.i)} {str(self.j)} {str(self.k)}"
 
     def __add__(self, other: 'Vector') -> 'Vector':
         """Adds two vectors."""

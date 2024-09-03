@@ -28,16 +28,16 @@ def load_variables():
 def store_variables():
     with open("variables.txt", "w") as file:
         for var_name, vector in variables.items():
-            file.write(f"{var_name} {vector.to_storable()}")
+            file.write(f"{var_name} {vector.to_storable()}\n")
 
-def not_in_range_throws(arguments: Iterable[Any], left_bound: int, right_bound: int) -> Iterable:
+def not_in_range_throws(arguments: Iterable[Any], left_bound: int, right_bound: int | float) -> Iterable:
     """
     Checks if the length of an array is in the provided bounds. Raises an exception if the range is invalid.
 
     Parameters:
     - arguments (Iteratable): Array to check
     - left_bound (int): The lower boundary of the range.
-    - right_bound (int): The upper boundary of the range (not inclusive).
+    - right_bound (int | float): The upper boundary of the range (not inclusive).
 
     Returns:
     - Iterable: This function return the inputed argument
@@ -108,6 +108,23 @@ def set_variable(var_name: str, i: str = "0.0", j: str = "0.0", k: str = "0.0") 
     variables[var_name] = vector
     print(f"{var_name} => <{vector.to_storable()}>")
 
+def add_variables(*var_names: str) -> None:
+    """
+    Adds the specified variables.
+
+    Parameters:
+    - var_names (str): Variable names to be added. Multiple variable names can be provided.
+
+    Returns:
+    - None: This function does not return a value.
+    """
+    resultant = Vector(0, 0, 0)
+
+    for var_name in var_names:
+        resultant += variables[var_name]
+
+    print(f"Resultant => <{resultant.to_storable()}>")
+
 def interprete(keyword: str, *args: list[str]) -> None:
     """
     Interprets the given keyword and arguments.
@@ -124,6 +141,8 @@ def interprete(keyword: str, *args: list[str]) -> None:
             get_variable(*not_exact_length_throws(args, [1, 2]))
         case "set":
             set_variable(*not_exact_length_throws(args, [1, 3, 4]))
+        case "add":
+            add_variables(*not_in_range_throws(args, 2, float('inf')))
         case _:
             raise SyntaxError(f"Invalid keyword: '{keyword}'")
 
