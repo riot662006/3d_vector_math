@@ -109,15 +109,18 @@ def interprete(keyword: str, *args: list[str]) -> None:
     Returns:
     - None: This function does not return a value.
     """
-    match(keyword):
-        case "get":
-            get_variable(*not_exact_length_throws(args, [1, 2]))
-        case "set":
-            set_variable(*not_exact_length_throws(args, [1, 3, 4]))
-        case "add":
-            add_variables(*not_in_range_throws(args, 2, float('inf')))
-        case _:
-            raise SyntaxError(f"Invalid keyword: '{keyword}'")
+    try:
+        match(keyword):
+            case "get":
+                get_variable(*not_exact_length_throws(args, [1, 2]))
+            case "set":
+                set_variable(*not_exact_length_throws(args, [1, 3, 4]))
+            case "add":
+                add_variables(*not_in_range_throws(args, 2, float('inf')))
+            case _:
+                raise SyntaxError(f"Invalid keyword: '{keyword}'")
+    except Exception as e:
+        print(str(e))
 
 def run():
     """
