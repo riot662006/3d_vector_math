@@ -25,7 +25,7 @@ def store_variables():
         for var_name, vector in variables.items():
             file.write(f"{var_name} {vector.to_storable()}")
 
-def not_in_range_throws(arguments: Iterable, left_bound: int, right_bound: int) -> Iterable:
+def not_in_range_throws(arguments: Iterable[Any], left_bound: int, right_bound: int) -> Iterable:
     """
     Checks if the length of an array is in the provided bounds. Raises an exception if the range is invalid.
 
@@ -35,14 +35,36 @@ def not_in_range_throws(arguments: Iterable, left_bound: int, right_bound: int) 
     - right_bound (int): The upper boundary of the range (not inclusive).
 
     Returns:
-    - None: This function does not return a value.
+    - Iterable: This function return the inputed argument
 
     Raises:
-    - ValueError: If the left_bound is greater than or equal to right_bound.
+    - ValueError: If argument not in range.
     """
     if len(arguments) < left_bound or len(arguments) >= right_bound:
         raise ValueError(f"Invalid arguments. Expected to be in range ({left_bound}, {right_bound}). got {len(arguments)}")
 
+    return arguments
+
+def not_exact_length_throws(arguments: Iterable[Any], valid_lengths: Union[int, List[int]]) -> Iterable:
+    """
+    Checks if the length of arguments is exactly one of the valid lengths.
+
+    Parameters:
+    - arguments (Iterable[Any]): The collection of arguments to check.
+    - valid_lengths (Union[int, List[int]]): The valid lengths. Can be a single integer or a list of integers.
+
+    Returns:
+    - Iterable: This function return the inputed argument
+
+    Raises:
+    - ValueError: If the length of arguments is not one of the valid lengths.
+    """
+    if isinstance(valid_lengths, int):
+        valid_lengths = [valid_lengths]
+
+    if len(arguments) not in valid_lengths:
+        raise ValueError(f"Invalid arguments. Expected length to be in {valid_lengths}. got {len(arguments)}")
+    
     return arguments
 
 def get_variable(var_name: str, component: str = 'ijk') -> None:
@@ -64,6 +86,23 @@ def get_variable(var_name: str, component: str = 'ijk') -> None:
 
     print(f"<{", ".join(to_print)}>")
 
+def set_variable(var_name: str, i: str = "0.0", j: str = "0.0", k: str = "0.0") -> None:
+    """
+    Sets the variable with the given name to the specified string values.
+
+    Parameters:
+    - var_name (str): The name of the variable to set.
+    - i (str): The x-component value to set as a string.
+    - j (str): The y-component value to set as a string.
+    - k (str): The z-component value to set as a string.
+
+    Returns:
+    - None: This function does not return a value.
+    """
+    vector = Vector(i, j, k)
+    variables[var_name] = vector
+    print(f"{var_name} => <{vector.to_storable()}>")
+
 def interprete(keyword: str, *args: list[str]) -> None:
     """
     Interprets the given keyword and arguments.
@@ -77,7 +116,9 @@ def interprete(keyword: str, *args: list[str]) -> None:
     """
     match(keyword):
         case "get":
-            get_variable(*not_in_range_throws(args, 1, 3))
+            get_variable(*not_exact_length_throws(args, [1, 2]))
+        case "set":
+            set_variable(*not_exact_length_throws(args, [1, 3, 4]))
         case _:
             raise SyntaxError(f"Invalid keyword: '{keyword}'")
 
