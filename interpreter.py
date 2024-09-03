@@ -3,6 +3,9 @@ from vector import Vector
 
 import variables
 
+class EndOfInterpreter(Exception):
+    """Exception to show the end of an interpreter run"""
+
 def not_in_range_throws(arguments: Iterable[Any], left_bound: int, right_bound: int | float) -> Iterable:
     """
     Checks if the length of an array is in the provided bounds. Raises an exception if the range is invalid.
@@ -117,8 +120,12 @@ def interprete(keyword: str, *args: list[str]) -> None:
                 set_keyword(*not_exact_length_throws(args, [1, 3, 4]))
             case "add":
                 add_keyword(*not_in_range_throws(args, 2, float('inf')))
+            case "exit": # for now it doesn't matter what the arguments are
+                raise EndOfInterpreter()
             case _:
                 raise SyntaxError(f"Invalid keyword: '{keyword}'")
+    except EndOfInterpreter as e:
+        raise e
     except Exception as e:
         print(str(e))
 
@@ -129,11 +136,21 @@ def run():
     # loads the variables
     variables.load_vars()
 
-    while (True):
-        # nothing right now
-        input_line = input("> ")
-        interprete(*input_line.split())
-        break
 
-    # stores variables for next run
-    variables.store_vars()
+    try:
+        while (True):
+            # nothing right now
+            input_line = input("> ")
+            if len(input_line) == 0:
+                continue
+            interprete(*input_line.split())
+    except EndOfInterpreter:
+        pass
+    except KeyboardInterrupt:
+        pass
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+    finally:
+        # stores variables for next run
+        variables.store_vars()
+        print("Variables have been stored")
