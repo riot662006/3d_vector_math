@@ -45,7 +45,7 @@ def not_exact_length_throws(arguments: Iterable[Any], valid_lengths: Union[int, 
     
     return arguments
 
-def get_variable(var_name: str, component: str = 'ijk') -> None:
+def get_keyword(var_name: str, component: str = 'ijk') -> None:
     """
     Prints the components of variable `var_name`.
 
@@ -64,9 +64,9 @@ def get_variable(var_name: str, component: str = 'ijk') -> None:
 
     print(f"<{", ".join(to_print)}>")
 
-def set_variable(var_name: str, i: str = "0.0", j: str = "0.0", k: str = "0.0") -> None:
+def set_keyword(var_name: str, i: str = "0.0", j: str = "0.0", k: str = "0.0") -> None:
     """
-    Sets the variable with the given name to the specified string values.
+    Sets the variable with the given name to the specified string values and prints the outcome.
 
     Parameters:
     - var_name (str): The name of the variable to set.
@@ -81,9 +81,9 @@ def set_variable(var_name: str, i: str = "0.0", j: str = "0.0", k: str = "0.0") 
     variables.set_var(var_name, vector)
     print(f"{var_name} => <{vector.to_storable()}>")
 
-def add_variables(*var_names: str) -> None:
+def add_keyword(*var_names: str) -> None:
     """
-    Adds the specified variables.
+    Prints the resultant of adding the specified variables.
 
     Parameters:
     - var_names (str): Variable names to be added. Multiple variable names can be provided.
@@ -112,11 +112,11 @@ def interprete(keyword: str, *args: list[str]) -> None:
     try:
         match(keyword):
             case "get":
-                get_variable(*not_exact_length_throws(args, [1, 2]))
+                get_keyword(*not_exact_length_throws(args, [1, 2]))
             case "set":
-                set_variable(*not_exact_length_throws(args, [1, 3, 4]))
+                set_keyword(*not_exact_length_throws(args, [1, 3, 4]))
             case "add":
-                add_variables(*not_in_range_throws(args, 2, float('inf')))
+                add_keyword(*not_in_range_throws(args, 2, float('inf')))
             case _:
                 raise SyntaxError(f"Invalid keyword: '{keyword}'")
     except Exception as e:
